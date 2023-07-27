@@ -2,6 +2,67 @@
 
 image::docs/preview.gif[]
 
+== Usage
+
+[source, python]
+----
+image foo = ParallaxDisplayable(
+    (1920, 1080),
+    ("images/backgrounds/scrolling_forest/10.png", 0.0),
+    ("images/backgrounds/scrolling_forest/08.png", 0.001),
+    ("images/backgrounds/scrolling_forest/08.png", 0.0025),
+    ("images/backgrounds/scrolling_forest/07.png", 0.005),
+    ("images/backgrounds/scrolling_forest/06.png", 0.0075),
+    ("images/backgrounds/scrolling_forest/05.png", 0.025),
+    ("images/backgrounds/scrolling_forest/04.png", 0.025),
+    ("images/backgrounds/scrolling_forest/03.png", 0.05),
+    ("images/backgrounds/scrolling_forest/02.png", 0.05),
+    ("images/backgrounds/scrolling_forest/01.png", 0.075),
+    ("images/backgrounds/scrolling_forest/00.png", 0.1),
+)
+----
+
+=== Construction
+
+.Positional Arguments
+--
+[cols="1h,2m,7a"]
+|===
+| dimensions
+| tuple[int, int]
+| A two-tuple containing the width and height of the displayable in the format
+`(width, height)`.
+
+| *layers
+| tuple[Displayable, float]
+| One or more two-tuples that each contain a displayable to render (which may be
+an image path/name) and a float which represents the scrolling speed of the
+layer.
+
+The layers are ordered back to front, meaning the first given layer will be the
+furthest from the player while the last given layer will be the closest.
+|===
+--
+
+.Keyword Arguments
+--
+[cols="1h,2m,7a"]
+|===
+| direction
+| "left" \| "right"
+| A string value that must be one of `"left"` or `"right"` that controls the
+direction in which the layers will scroll.
+
+Defaults to `"left"`.
+
+| render_delay
+| float
+| Controls the delay between Displayable re-renders.
+
+Defaults to `0.01`
+|===
+--
+
 == Credits
 
 * link:https://edermunizz.itch.io/free-pixel-art-forest[Background layers] by https://edermunizz.itch.io/[Eder Muniz]

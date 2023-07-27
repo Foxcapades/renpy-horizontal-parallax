@@ -24,10 +24,14 @@ class ParallaxDisplayable(renpy.Displayable):
             A two-tuple containing the width and height of the displayable in
             the format "(width, height)".
 
-        layers : list[tuple[Displayable, float]]
-            A list of one or more two-tuples that each contain a displayable to
-            render (which may be an image path/name) and a float which
-            represents the scrolling speed of the layer.
+        *layers : tuple[Displayable, float]
+            One or more two-tuples that each contain a displayable to render
+            (which may be an image path/name) and a float which represents the
+            scrolling speed of the layer.
+
+            The layers are ordered back to front, meaning the first given layer
+            will be the furthest from the player while the last given layer will
+            be the closest.
 
         Keyword Arguments
         -----------------
