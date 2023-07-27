@@ -112,7 +112,7 @@ class ParallaxDisplayable(renpy.Displayable):
             ParallaxLayer(layer[0], layer[1], self._width, self._left) for layer in layers
         ]
 
-    def render(self, width, height, st, at):
+    def render(self, width, height, st, at) -> renpy.Render:
         render = renpy.Render(self._width, self._height)
 
         for layer in self._layers:
@@ -174,7 +174,7 @@ class ParallaxLayer:
     def update(self, at: float) -> None:
         delta = at - self._last_time
         self._last_time = at
-        percent = delta * self._speed
+        percent = self._clamp(delta * self._speed)
 
         self._lazy_dimensions()
 
@@ -192,13 +192,13 @@ class ParallaxLayer:
             self._render_right(render, l_render)
 
 
-    def _update_left(self, percent: float):
+    def _update_left(self, percent: float) -> None:
         self._xoffset -= self._width * percent
 
         while self._xoffset < -self._width:
             self._xoffset += self._width
 
-    def _update_right(self, percent: float):
+    def _update_right(self, percent: float) -> None:
         self._xoffset += self._width * percent
 
         x = self._width + self._max_width
@@ -206,7 +206,7 @@ class ParallaxLayer:
         while self._xoffset > x:
             self._xoffset -= self._width
 
-    def _render_left(self, render: renpy.Render, l_render: renpy.Render):
+    def _render_left(self, render: renpy.Render, l_render: renpy.Render) -> None:
         render.blit(l_render, (self._xoffset, 0))
 
         width = self._width + self._xoffset
@@ -215,7 +215,7 @@ class ParallaxLayer:
             render.blit(l_render, (width, 0))
             width += self._width
 
-    def _render_right(self, render: renpy.Render, l_render: renpy.Render):
+    def _render_right(self, render: renpy.Render, l_render: renpy.Render) -> None:
         position = self._max_width - self._width + self._xoffset
 
         render.blit(l_render, (position, 0))
@@ -224,7 +224,7 @@ class ParallaxLayer:
             position -= self._width
             render.blit(l_render, (position, 0))
 
-    def _lazy_dimensions(self):
+    def _lazy_dimensions(self) -> None:
         if self._width > 0:
             return
 
@@ -234,3 +234,12 @@ class ParallaxLayer:
 
         if self._width == 0 or self._height == 0:
             raise Exception("displayable for ParallaxLayer has a width and/or height of 0")
+
+    @staticmethod
+    def _clamp(percent: float) -> float:
+        if percent < 0.0:
+            return 0.0
+        elif percent > 1.0:
+            return 1.0
+        else:
+            return percent

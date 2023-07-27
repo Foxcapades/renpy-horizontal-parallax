@@ -1,6 +1,6 @@
 = ParallaxDisplayable
 
-video::docs/parallax.webm[]
+image::docs/preview.gif[]
 
 == Credits
 
