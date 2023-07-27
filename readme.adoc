@@ -1,0 +1,7 @@
+= ParallaxDisplayable
+
+video::docs/parallax.webm[]
+
+== Credits
+
+* link:https://edermunizz.itch.io/free-pixel-art-forest[Background layers] by https://edermunizz.itch.io/[Eder Muniz]
