@@ -1,14 +1,20 @@
-= ParallaxDisplayable
+= ParallaxScroll
+:icons: font
+
+Source code and demonstration of a scrolling displayable built on multiple
+layers with a parallax effect.
 
 image::docs/preview.gif[]
 
 == Usage
 
+=== Constructing a ParallaxScroll
+
 [source, python]
 ----
-image foo = ParallaxDisplayable(
+image foo = ParallaxScroll(
     (1920, 1080),
-    ("images/backgrounds/scrolling_forest/10.png", 0.0),
+    ("images/backgrounds/scrolling_forest/10.png", 0.0),    # Doesn't scroll
     ("images/backgrounds/scrolling_forest/08.png", 0.001),
     ("images/backgrounds/scrolling_forest/08.png", 0.0025),
     ("images/backgrounds/scrolling_forest/07.png", 0.005),
@@ -18,11 +24,11 @@ image foo = ParallaxDisplayable(
     ("images/backgrounds/scrolling_forest/03.png", 0.05),
     ("images/backgrounds/scrolling_forest/02.png", 0.05),
     ("images/backgrounds/scrolling_forest/01.png", 0.075),
-    ("images/backgrounds/scrolling_forest/00.png", 0.1),
+    ("images/backgrounds/scrolling_forest/00.png", 0.1),    # Scrolls 10% of it's width per second
 )
 ----
 
-=== Construction
+==== `+__init__+` Signature
 
 .Positional Arguments
 --
@@ -63,6 +69,42 @@ Defaults to `0.01`
 |===
 --
 
+
+=== Advanced Usage
+
+The `ParallaxScroll` class extends Ren'Py's `Transform` type, meaning any
+normal transform keyword argument is permitted and will be applied to the
+`ParallaxScroll`.
+
+For example, the colors of the parallax may be inverted by doing the following:
+
+[source, python]
+----
+ParallaxScroll(
+  ... # dimensions
+  ... # layers
+  matrixcolor=InvertMatrix(1.0)
+)
+----
+
+The exception to the above rule is the `crop` keyword argument, which is used
+to contain the scrollable within it's configured size boundaries.  Specifying
+the `crop` keyword will result in an `Exception` being raised.
+
 == Credits
 
 * link:https://edermunizz.itch.io/free-pixel-art-forest[Background layers] by https://edermunizz.itch.io/[Eder Muniz]
+
+== License
+
+This source code and project are released under the MIT license, which to
+paraphrase in a way that is not legally binding:
+
+* You can use it for free things
+* You can use it for paid things
+* You can modify it however you see fit
+* You can redistribute it as you see fit
+* Go nuts!
+
+For a better breakdown of what the license actually means see:
+https://choosealicense.com/licenses/mit/

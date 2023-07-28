@@ -1,4 +1,4 @@
-﻿image foo = ParallaxDisplayable(
+﻿image foo = ParallaxScroll(
     (1920, 1080),
     ("images/backgrounds/scrolling_forest/10.png", 0.0),
     ("images/backgrounds/scrolling_forest/08.png", 0.001),

@@ -1,5 +1,5 @@
 import renpy  # type: ignore
-from renpy import Displayable, Image  # type: ignore
+from renpy import Transform  # type: ignore
 
 """renpy
 init python:
@@ -7,7 +7,11 @@ init python:
 from typing import Tuple
 
 
-class ParallaxDisplayable(renpy.Displayable):
+class ParallaxScroll(Transform):
+    """
+    Scrolling Image with a configurable parallax effect.
+    """
+
     def __init__(
         self,
         dimensions: Tuple[int, int],
@@ -15,8 +19,8 @@ class ParallaxDisplayable(renpy.Displayable):
         **kwargs
     ) -> None:
         """
-        Initializes the new ParallaxDisplayable instance with the given
-        arguments.
+        Initializes the new ParallaxScroll instance with the given arguments.
+
 
         Arguments
         ---------
@@ -26,33 +30,80 @@ class ParallaxDisplayable(renpy.Displayable):
 
         *layers : tuple[Displayable, float]
             One or more two-tuples that each contain a displayable to render
-            (which may be an image path/name) and a float which represents the
-            scrolling speed of the layer.
+            and a float which represents the scrolling speed of the layer.
+
+            The first value of each tuple MUST be either an instance of
+            renpy.Displayable (Composite, Image, Transform, etc.) or a string
+            representing the name of or path to a defined image or an image
+            file.
+
+            The second value of each tuple MUST be a float value between `0.0`
+            and `1.0` inclusive.  This value represents the percent of the
+            layer image's width that will scroll across the screen per second.
 
             The layers are ordered back to front, meaning the first given layer
             will be the furthest from the player while the last given layer will
             be the closest.
 
+
         Keyword Arguments
         -----------------
         direction : "left" | "right"
-            Controls the direction the ParallaxDisplayable layers will scroll.
+            Controls the direction the ParallaxScroll layers will scroll.
+
+            A value of "left" means the layers will scroll from right to left,
+            where a value of "right" means the layers will scroll from left to
+            right.
+
+            Any other value passed as the `direction` argument will cause an
+            exception to be raised.
 
             Defaults to "left".
 
         render_delay : float
-            Controls the delay between ParallaxDisplayable rerenders.
+            Controls the delay between ParallaxScroll rerenders.
 
             Defaults to 0.01
         """
-
-        super(ParallaxDisplayable, self).__init__(**kwargs)
 
         if (not isinstance(dimensions, tuple)) or len(dimensions) != 2:
             raise Exception(
                 'argument "dimensions" must be a two-tuple containing a width '
                 'and a height in the form "(width, height)"'
             )
+
+        if not (isinstance(dimensions[0], int) or isinstance(dimensions[0], float)):
+            raise Exception(
+                'argument "dimensions" value 1 was not an int or a float value.'
+            )
+
+        if not (isinstance(dimensions[1], int) or isinstance(dimensions[1], float)):
+            raise Exception(
+                'argument "dimensions" value 2 was not an int or a float value.'
+            )
+
+        if 'crop' in kwargs:
+            raise Exception('argument "crop" is not permitted.')
+
+        self.__child = _ParallaxScrollContainer(dimensions, *layers, **kwargs)
+
+        if 'direction' in kwargs:
+            del kwargs['direction']
+
+        if 'render_delay' in kwargs:
+            del kwargs['render_delay']
+
+        super(ParallaxScroll, self).__init__(self.__child, **kwargs, crop=(0, 0, dimensions[0], dimensions[1]))
+
+
+class _ParallaxScrollContainer(renpy.Displayable):
+    def __init__(
+        self,
+        dimensions: Tuple[int, int],
+        *layers: Tuple[renpy.Displayable, float],
+        **kwargs
+    ) -> None:
+        super(_ParallaxScrollContainer, self).__init__(**kwargs)
 
         if (not (isinstance(layers, tuple))) or len(layers) < 1:
             raise Exception(
@@ -86,18 +137,29 @@ class ParallaxDisplayable(renpy.Displayable):
                     ' nor an int value.'
                 )
 
-            if layer[1] < 0:
+            if layer[1] < 0.0:
                 raise Exception(
                     'argument "layers" value number ' + str(i + 1) + ' was'
                     ' less than zero.  Speed values MUST be greater than or'
-                    ' equal to 0.0.'
+                    ' equal to 0.0'
                 )
+
+            if layer[1] > 1.0:
+                raise Exception(
+                    'argument "layers" value number ' + str(i + 1) + ' was'
+                    ' greater than one.  Speed values MUST be less than or'
+                    ' equal to 1.0'
+                )
+
 
         if "render_delay" in kwargs:
             if not (isinstance(kwargs["render_delay"], float) or isinstance(kwargs["render_delay"], int)):
                 raise Exception(
                     'argument "render_delay" must be a float or an int value'
                 )
+            self._render_delay = kwargs['render_delay']
+        else:
+            self._render_delay = 0.01
 
         if "direction" in kwargs:
             if kwargs['direction'] != "left" and kwargs['direction'] != "right":
@@ -113,7 +175,8 @@ class ParallaxDisplayable(renpy.Displayable):
         self._width, self._height = dimensions
 
         self._layers = [
-            ParallaxLayer(layer[0], layer[1], self._width, self._left) for layer in layers
+            _ParallaxScrollLayer(layer[0], layer[1], self._width, self._left)
+            for layer in layers
         ]
 
     def render(self, width, height, st, at) -> renpy.Render:
@@ -123,7 +186,7 @@ class ParallaxDisplayable(renpy.Displayable):
             layer.update(at)
             layer.render(render, width, height, st, at)
 
-        renpy.redraw(self, 0.01)
+        renpy.redraw(self, self._render_delay)
 
         return render
 
@@ -140,7 +203,7 @@ class ParallaxDisplayable(renpy.Displayable):
             render.blit(layer_render, (width, 0))
 
 
-class ParallaxLayer:
+class _ParallaxScrollLayer:
     def __init__(
         self,
         displayable: renpy.Displayable | str,
@@ -237,7 +300,7 @@ class ParallaxLayer:
         self._height: int = size[1]
 
         if self._width == 0 or self._height == 0:
-            raise Exception("displayable for ParallaxLayer has a width and/or height of 0")
+            raise Exception("displayable for _ParallaxScrollLayer has a width and/or height of 0")
 
     @staticmethod
     def _clamp(percent: float) -> float:
