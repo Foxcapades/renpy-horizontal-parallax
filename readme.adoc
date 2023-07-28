@@ -71,7 +71,7 @@ The layers are ordered back to front, meaning the first given layer will be the
 furthest from the player while the last given layer will be the closest.
 
 
-====== Keyword Arguments
+===== Keyword Arguments
 
 `direction : "left"|"right"`::
 +
