@@ -46,8 +46,7 @@ image foo = ParallaxScroll(
 def __init__(self, dimensions, *layers, **kwargs)
 ----
 
-.Positional Arguments
---
+===== Positional Arguments
 
 `dimensions : tuple[int, int]`::
 +
@@ -70,10 +69,10 @@ will scroll across the screen per second.
 +
 The layers are ordered back to front, meaning the first given layer will be the
 furthest from the player while the last given layer will be the closest.
---
 
-.Keyword Arguments
---
+
+====== Keyword Arguments
+
 `direction : "left"|"right"`::
 +
 Controls the direction the ParallaxScroll layers will scroll.
@@ -91,7 +90,6 @@ Defaults to `"left"`.
 Controls the delay between Displayable re-renders.
 +
 Defaults to `0.01`
---
 
 
 === Advanced Usage
