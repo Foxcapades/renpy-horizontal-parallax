@@ -1,4 +1,4 @@
-= ParallaxScroll
+= Ren'Py ParallaxScroll
 :icons: font
 
 link:https://github.com/Foxcapades/renpy-parallax-displayable/releases/latest[Latest Release]
