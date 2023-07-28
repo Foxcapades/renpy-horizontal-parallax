@@ -52,9 +52,16 @@ image foo = ParallaxScroll(
 
 | *layers
 | tuple[Displayable, float]
-| One or more two-tuples that each contain a displayable to render (which may be
-an image path/name) and a float which represents the scrolling speed of the
-layer.
+| One or more two-tuples that each contain a displayable to render and a float
+which represents the scrolling speed of the layer.
+
+The first value of each tuple MUST be either an instance of renpy.Displayable
+(Composite, Image, Transform, etc.) or a string representing the name of or path
+to a defined image or an image file.
+
+The second value of each tuple MUST be a float value between `0.0` and `1.0`
+inclusive.  This value represents the percent of the layer image's width that
+will scroll across the screen per second.
 
 The layers are ordered back to front, meaning the first given layer will be the
 furthest from the player while the last given layer will be the closest.
