@@ -96,81 +96,70 @@ class ParallaxScroll(Transform):
 
 
 class _ParallaxScrollContainer(renpy.Displayable):
+    """
+    Creator Defined Displayable representing a layered scrolling image with
+    a configurable parallax effect.
+    """
+
     def __init__(
         self,
         dimensions: tuple[int, int],
         *layers: tuple[renpy.Displayable, float],
         **kwargs
     ) -> None:
+        """
+        Initializes the new _ParallaxScrollContainer instance with the given
+        arguments.
+
+        Arguments
+        ---------
+        dimensions : tuple[int, int]
+            A two-tuple containing the width and height of the displayable in
+            the format "(width, height)".
+
+        *layers : tuple[Displayable, float]
+            One or more two-tuples that each contain a displayable to render
+            and a float which represents the scrolling speed of the layer.
+
+            The first value of each tuple MUST be either an instance of
+            renpy.Displayable (Composite, Image, Transform, etc.) or a string
+            representing the name of or path to a defined image or an image
+            file.
+
+            The second value of each tuple MUST be a float value between `0.0`
+            and `1.0` inclusive.  This value represents the percent of the
+            layer image's width that will scroll across the screen per second.
+
+            The layers are ordered back to front, meaning the first given layer
+            will be the furthest from the player while the last given layer will
+            be the closest.
+
+
+        Keyword Arguments
+        -----------------
+        direction : "left" | "right"
+            Controls the direction the ParallaxScroll layers will scroll.
+
+            A value of "left" means the layers will scroll from right to left,
+            where a value of "right" means the layers will scroll from left to
+            right.
+
+            Any other value passed as the `direction` argument will cause an
+            exception to be raised.
+
+            Defaults to "left".
+
+        render_delay : float
+            Controls the delay between ParallaxScroll rerenders.
+
+            Defaults to 0.01
+        """
         super(_ParallaxScrollContainer, self).__init__(**kwargs)
 
-        if (not (isinstance(layers, tuple))) or len(layers) < 1:
-            raise Exception(
-                'argument "layers" must be a list containing one or more'
-                ' two-tuples of a Displayable to render and a float'
-                ' representing the layer\'s scrolling speed in the form'
-                ' "(displayable, speed)".'
-            )
+        self._validate_layers(layers)
 
-        for i, layer in enumerate(layers):
-            if not (isinstance(layer, tuple) and len(layer) == 2):
-                raise Exception(
-                    'argument "layers" value number ' + str(i + 1) + ' was not'
-                    ' a tuple value.  "layers" must contain only two-tuples of'
-                    ' a Displayable to render and a float representing the'
-                    ' speed of the layer\'s scrolling speed in the form'
-                    ' "(displayable, speed)".'
-                )
-
-            if not (isinstance(layer[0], renpy.display.core.Displayable) or isinstance(layer[0], str)):
-                raise Exception(
-                    'argument "layers" value number ' + str(i + 1) +
-                    ' contained a value at position 1 that was neither a'
-                    ' Displayable nor a string value.'
-                )
-
-            if not (isinstance(layer[1], float) or isinstance(layer[1], int)):
-                raise Exception(
-                    'argument "layers" value number ' + str(i + 1) +
-                    ' contained a value at position 2 that was neither a float'
-                    ' nor an int value.'
-                )
-
-            if layer[1] < 0.0:
-                raise Exception(
-                    'argument "layers" value number ' + str(i + 1) + ' was'
-                    ' less than zero.  Speed values MUST be greater than or'
-                    ' equal to 0.0'
-                )
-
-            if layer[1] > 1.0:
-                raise Exception(
-                    'argument "layers" value number ' + str(i + 1) + ' was'
-                    ' greater than one.  Speed values MUST be less than or'
-                    ' equal to 1.0'
-                )
-
-
-        if "render_delay" in kwargs:
-            if not (isinstance(kwargs["render_delay"], float) or isinstance(kwargs["render_delay"], int)):
-                raise Exception(
-                    'argument "render_delay" must be a float or an int value'
-                )
-            self._render_delay = kwargs['render_delay']
-        else:
-            self._render_delay = 0.01
-
-        if "direction" in kwargs:
-            if kwargs['direction'] != "left" and kwargs['direction'] != "right":
-                raise Exception(
-                    'argument "direction" must one of the values "left" or'
-                    ' "right"'
-                )
-            self._left = kwargs['direction'] == "left"
-        else:
-            self._left = True
-
-
+        self._left = self._require_is_left(kwargs)
+        self._render_delay = self._require_render_delay(kwargs)
         self._width, self._height = dimensions
 
         self._layers = [
@@ -192,14 +181,76 @@ class _ParallaxScrollContainer(renpy.Displayable):
     def visit(self):
         return [ layer.displayable for layer in self._layers ]
 
-    def _render_layer(self, render, layer, width, height, st, at):
-        layer_render = renpy.render(layer, width, height, st, at)
-        width, height = layer_render.get_size()
+    def _validate_layers(self, layers: tuple[tuple[renpy.Displayable | str, float], ...]) -> None:
+        if len(layers) < 1:
+            raise Exception(
+                'argument "layers" must be a list containing one or more'
+                ' two-tuples of a Displayable to render and a float'
+                ' representing the layer\'s scrolling speed in the form'
+                ' "(displayable, speed)".'
+            )
 
-        render.blit(layer_render, (0, 0))
+        for i, layer in enumerate(layers):
+            self._validate_layer(i, layer)
 
-        if width < self._width:
-            render.blit(layer_render, (width, 0))
+    def _validate_layer(self, i: int, layer: tuple[renpy.Displayable | str, float]) -> None:
+        if not (isinstance(layer, tuple) and len(layer) == 2):
+            raise Exception(
+                'argument "layers" value number ' + str(i + 1) + ' was not'
+                ' a tuple value.  "layers" must contain only two-tuples of'
+                ' a Displayable to render and a float representing the'
+                ' speed of the layer\'s scrolling speed in the form'
+                ' "(displayable, speed)".'
+            )
+
+        if not (isinstance(layer[0], renpy.display.core.Displayable) or isinstance(layer[0], str)):
+            raise Exception(
+                'argument "layers" value number ' + str(i + 1) +
+                ' contained a value at position 1 that was neither a'
+                ' Displayable nor a string value.'
+            )
+
+        if not (isinstance(layer[1], float) or isinstance(layer[1], int)):
+            raise Exception(
+                'argument "layers" value number ' + str(i + 1) +
+                ' contained a value at position 2 that was neither a float'
+                ' nor an int value.'
+            )
+
+        if layer[1] < 0.0:
+            raise Exception(
+                'argument "layers" value number ' + str(i + 1) + ' was'
+                ' less than zero.  Speed values MUST be greater than or'
+                ' equal to 0.0'
+            )
+
+        if layer[1] > 1.0:
+            raise Exception(
+                'argument "layers" value number ' + str(i + 1) + ' was'
+                ' greater than one.  Speed values MUST be less than or'
+                ' equal to 1.0'
+            )
+
+    def _require_is_left(self, kwargs: dict[str, any]) -> bool:
+        if "direction" in kwargs:
+            if kwargs['direction'] != "left" and kwargs['direction'] != "right":
+                raise Exception(
+                    'argument "direction" must one of the values "left" or'
+                    ' "right"'
+                )
+            return kwargs['direction'] == "left"
+        else:
+            return True
+
+    def _require_render_delay(self, kwargs: dict[str, any]) -> float:
+        if "render_delay" in kwargs:
+            if not (isinstance(kwargs["render_delay"], float) or isinstance(kwargs["render_delay"], int)):
+                raise Exception(
+                    'argument "render_delay" must be a float or an int value'
+                )
+            return float(kwargs['render_delay'])
+        else:
+            return 0.01
 
 
 class _ParallaxScrollLayer:
