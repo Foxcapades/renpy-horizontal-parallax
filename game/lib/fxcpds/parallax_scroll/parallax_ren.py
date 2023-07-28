@@ -4,7 +4,6 @@ from renpy import Transform  # type: ignore
 """renpy
 init python:
 """
-from typing import Tuple
 
 
 class ParallaxScroll(Transform):
@@ -14,8 +13,8 @@ class ParallaxScroll(Transform):
 
     def __init__(
         self,
-        dimensions: Tuple[int, int],
-        *layers: Tuple[renpy.Displayable | str, float],
+        dimensions: tuple[int, int],
+        *layers: tuple[renpy.Displayable | str, float],
         **kwargs
     ) -> None:
         """
