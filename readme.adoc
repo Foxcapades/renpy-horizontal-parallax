@@ -74,8 +74,13 @@ furthest from the player while the last given layer will be the closest.
 |===
 | direction
 | "left" \| "right"
-| A string value that must be one of `"left"` or `"right"` that controls the
-direction in which the layers will scroll.
+| Controls the direction the ParallaxScroll layers will scroll.
+
+A value of "left" means the layers will scroll from right to left, where a value
+of "right" means the layers will scroll from left to right.
+
+Any other value passed as the `direction` argument will cause an exception to be
+raised.
 
 Defaults to `"left"`.
 
