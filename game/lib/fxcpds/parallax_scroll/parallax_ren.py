@@ -99,6 +99,20 @@ class _ParallaxScrollContainer(renpy.Displayable):
     """
     Creator Defined Displayable representing a layered scrolling image with
     a configurable parallax effect.
+
+    Private Properties
+    ------------------
+    _render_delay : float
+        Delay a a fraction of a second between re-renders of the displayable.
+
+    _width : int
+        Displayable render width.
+
+    _height : int
+        Displayable render height.
+
+    _layers : list[_ParallaxScrollLayer]
+        A list of the layers that this displayable is composed of.
     """
 
     def __init__(
@@ -158,16 +172,17 @@ class _ParallaxScrollContainer(renpy.Displayable):
 
         self._validate_layers(layers)
 
-        self._left = self._require_is_left(kwargs)
+        left = self._require_is_left(kwargs)
+
         self._render_delay = self._require_render_delay(kwargs)
         self._width, self._height = dimensions
 
         self._layers = [
-            _ParallaxScrollLayer(layer[0], layer[1], self._width, self._left)
+            _ParallaxScrollLayer(layer[0], layer[1], self._width, left)
             for layer in layers
         ]
 
-    def render(self, width, height, st, at) -> renpy.Render:
+    def render(self, width: int, height: int, st: float, at: float) -> renpy.Render:
         render = renpy.Render(self._width, self._height)
 
         for layer in self._layers:
@@ -178,7 +193,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
 
         return render
 
-    def visit(self):
+    def visit(self) -> renpy.Displayable:
         return [ layer.displayable for layer in self._layers ]
 
     def _validate_layers(self, layers: tuple[tuple[renpy.Displayable | str, float], ...]) -> None:
