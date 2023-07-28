@@ -269,6 +269,41 @@ class _ParallaxScrollContainer(renpy.Displayable):
 
 
 class _ParallaxScrollLayer:
+    """
+    Represents a single layer that is part of a scrolling image with a parallax
+    effect.
+
+    Private Properties
+    ------------------
+    _width : int
+        Width of the displayable that this layer is based on.
+
+    _height : int
+        Height of the displayable that this layer is based on
+
+    _xoffset : float
+        Offset of this layer's displayable render position from zero.  This
+        value will go to a minimum of negative `self._width` when scrolling left
+        and go to a maximum lf `self._width` when scrolling right.
+
+    _last_time : float
+        Timestamp of the last update as a render time float in seconds.  This
+        value is used to calculate how much the layer should move to keep a
+        constant rate of `self._speed`.
+
+    _speed : float
+        How much of `self._width` the layer should move per second.  For
+        example, if this value is `0.2` then this layer will scroll 20% of it's
+        width in the target direction.
+
+    _max_width : int
+        Width cutoff for rendering.  This value is used to determine how many
+        times the base displayable should repeat to fill the horizontal space
+        of the parent displayable.
+
+    _left : bool
+        Whether this layer is scrolling right to left.
+    """
     def __init__(
         self,
         displayable: renpy.Displayable | str,
@@ -285,7 +320,7 @@ class _ParallaxScrollLayer:
 
         self._width: int = -1
         self._height: int = -1
-        self._xoffset: int = 0
+        self._xoffset: float = 0.0
         self._last_time: float = 0.0
         self._speed: float = speed
         self._max_width: int = max_width
@@ -293,17 +328,38 @@ class _ParallaxScrollLayer:
 
     @property
     def width(self) -> int:
+        """
+        The width of the displayable backing this layer.
+        """
+        self._lazy_dimensions()
         return self._width
 
     @property
     def height(self) -> int:
+        """
+        The height of the displayable backing this layer.
+        """
+        self._lazy_dimensions()
         return self._height
 
     @property
     def displayable(self) -> renpy.Displayable:
+        """
+        The displayable backing this layer.
+        """
         return self._displayable
 
     def update(self, at: float) -> None:
+        """
+        Updates the scroll position of this layer.
+
+        Arguments
+        ---------
+        at : float
+            Display time for the parent displayable.  This value is used to
+            calculate how much the layer should move based on the previous time
+            to keep a smooth or consistent motion.
+        """
         delta = at - self._last_time
         self._last_time = at
         percent = self._clamp(delta * self._speed)
@@ -316,6 +372,32 @@ class _ParallaxScrollLayer:
             self._update_right(percent)
 
     def render(self, render: renpy.Render, width: int, height: int, st, at) -> None:
+        """
+        Renders this layer.
+
+        Arguments
+        ---------
+        render : renpy.Render
+            Parent render that this layer will be displayed in.
+
+        width : int
+            Amount of horizontal space available to the parent displayable, in
+            pixels.
+
+        height : int
+            Amount of vertical space available to the parent displayable, in
+            pixels.
+
+        st : float
+            The shown timebase in seconds.  The shown timebase begins when the
+            parent displayable is first shown on the screen.
+
+        at : float
+            The animation timebase, in seconds.  The animation timebase begins
+            when an image with the same tag was shown without being hidden.
+            When the parent displayable is shown without a tag, this is the same
+            as the shown timebase.
+        """
         l_render = renpy.render(self._displayable, width, height, st, at)
 
         if self._left:
