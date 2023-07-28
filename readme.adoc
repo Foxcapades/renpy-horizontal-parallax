@@ -39,7 +39,8 @@ image foo = ParallaxScroll(
 )
 ----
 
-==== `+__init__+` Signature
+
+==== `+__init__+`
 
 [source, python]
 ----
@@ -113,6 +114,7 @@ The exception to the above rule is the `crop` keyword argument, which is used
 to contain the scrollable within it's configured size boundaries.  Specifying
 the `crop` keyword will result in an `Exception` being raised.
 
+
 === About Layers
 
 Each layer consists of a single image or Displayable that is repeated on the
@@ -123,9 +125,17 @@ speed to create the parallax effect.
 Layer displayables will only be repeated along the x-axis and will be positioned
 at the top of the ParallaxScroll bounding box.
 
+While the first layer given (the layer furthest back in the image) may or may
+not have transparency, the layers above it should have some transparency to show
+through to the layers underneath.  This makes PNG files a perfect fit unless you
+are creating the images on the fly via a Creator Defined Displayable or some
+other mechanism.
+
+
 == Credits
 
 * link:https://edermunizz.itch.io/free-pixel-art-forest[Background layers] by https://edermunizz.itch.io/[Eder Muniz]
+
 
 == License
 
