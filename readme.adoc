@@ -41,55 +41,56 @@ image foo = ParallaxScroll(
 
 ==== `+__init__+` Signature
 
+[source, python]
+----
+def __init__(self, dimensions, *layers, **kwargs)
+----
+
 .Positional Arguments
 --
-[cols="1h,2m,7a"]
-|===
-| dimensions
-| tuple[int, int]
-| A two-tuple containing the width and height of the displayable in the format
+
+`dimensions : tuple[int, int]`::
++
+A two-tuple containing the width and height of the displayable in the format
 `(width, height)`.
 
-| *layers
-| tuple[Displayable, float]
-| One or more two-tuples that each contain a displayable to render and a float
-which represents the scrolling speed of the layer.
 
+`*layers : tuple[renpy.Displayable | str, float]`::
++
+One or more two-tuples that each contain a displayable to render and a float
+which represents the scrolling speed of the layer.
++
 The first value of each tuple MUST be either an instance of renpy.Displayable
 (Composite, Image, Transform, etc.) or a string representing the name of or path
 to a defined image or an image file.
-
++
 The second value of each tuple MUST be a float value between `0.0` and `1.0`
 inclusive.  This value represents the percent of the layer image's width that
 will scroll across the screen per second.
-
++
 The layers are ordered back to front, meaning the first given layer will be the
 furthest from the player while the last given layer will be the closest.
-|===
 --
 
 .Keyword Arguments
 --
-[cols="1h,2m,7a"]
-|===
-| direction
-| "left" \| "right"
-| Controls the direction the ParallaxScroll layers will scroll.
-
+`direction : "left"|"right"`::
++
+Controls the direction the ParallaxScroll layers will scroll.
++
 A value of "left" means the layers will scroll from right to left, where a value
 of "right" means the layers will scroll from left to right.
-
++
 Any other value passed as the `direction` argument will cause an exception to be
 raised.
-
++
 Defaults to `"left"`.
 
-| render_delay
-| float
-| Controls the delay between Displayable re-renders.
-
+`render_delay : float`::
++
+Controls the delay between Displayable re-renders.
++
 Defaults to `0.01`
-|===
 --
 
 

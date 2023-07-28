@@ -15,7 +15,7 @@ class ParallaxScroll(Transform):
     def __init__(
         self,
         dimensions: Tuple[int, int],
-        *layers: Tuple[renpy.Displayable, float],
+        *layers: Tuple[renpy.Displayable | str, float],
         **kwargs
     ) -> None:
         """
