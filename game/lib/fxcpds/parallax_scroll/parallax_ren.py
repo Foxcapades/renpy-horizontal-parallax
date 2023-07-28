@@ -98,8 +98,8 @@ class ParallaxScroll(Transform):
 class _ParallaxScrollContainer(renpy.Displayable):
     def __init__(
         self,
-        dimensions: Tuple[int, int],
-        *layers: Tuple[renpy.Displayable, float],
+        dimensions: tuple[int, int],
+        *layers: tuple[renpy.Displayable, float],
         **kwargs
     ) -> None:
         super(_ParallaxScrollContainer, self).__init__(**kwargs)
