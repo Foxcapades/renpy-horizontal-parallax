@@ -384,9 +384,13 @@ class _ParallaxScrollLayer:
             Amount of horizontal space available to the parent displayable, in
             pixels.
 
+            The width is lazily evaluated at render time.
+
         height : int
             Amount of vertical space available to the parent displayable, in
             pixels.
+
+            The height is lazily evaluated at render time.
 
         st : float
             The shown timebase in seconds.  The shown timebase begins when the
@@ -407,12 +411,30 @@ class _ParallaxScrollLayer:
 
 
     def _update_left(self, percent: float) -> None:
+        """
+        Updates the layer render position for right-to-left movement.
+
+        Arguments
+        ---------
+        percent : float
+            Percent of the layer backing displayable's width that should be
+            moved in this update.
+        """
         self._xoffset -= self._width * percent
 
         while self._xoffset < -self._width:
             self._xoffset += self._width
 
     def _update_right(self, percent: float) -> None:
+        """
+        Updates the layer render position for left-to-right movement.
+
+        Arguments
+        ---------
+        percent : float
+            Percent of the layer backing displayable's width that should be
+            moved in this update.
+        """
         self._xoffset += self._width * percent
 
         x = self._width + self._max_width
@@ -421,6 +443,15 @@ class _ParallaxScrollLayer:
             self._xoffset -= self._width
 
     def _render_left(self, render: renpy.Render, l_render: renpy.Render) -> None:
+        """
+        Renders this layer to the parent render repeating the underlying
+        displayable to the right as needed to fill the target width.
+
+        Arguments
+        ---------
+        render : renpy.Render
+            The parent render that this layer will be rendered on.
+        """
         render.blit(l_render, (self._xoffset, 0))
 
         width = self._width + self._xoffset
@@ -430,6 +461,15 @@ class _ParallaxScrollLayer:
             width += self._width
 
     def _render_right(self, render: renpy.Render, l_render: renpy.Render) -> None:
+        """
+        Renders this layer to the parent render repeating the underlying
+        displayable to the left as needed to fill the target width.
+
+        Arguments
+        ---------
+        render : renpy.Render
+            The parent render that this layer will be rendered on.
+        """
         position = self._max_width - self._width + self._xoffset
 
         render.blit(l_render, (position, 0))
@@ -439,6 +479,10 @@ class _ParallaxScrollLayer:
             render.blit(l_render, (position, 0))
 
     def _lazy_dimensions(self) -> None:
+        """
+        Determines the dimensions of the underlying displayable by rendering it
+        and fetching the width and height by use of the `get_size` method.
+        """
         if self._width > 0:
             return
 

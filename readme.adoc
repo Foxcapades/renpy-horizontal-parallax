@@ -113,6 +113,16 @@ The exception to the above rule is the `crop` keyword argument, which is used
 to contain the scrollable within it's configured size boundaries.  Specifying
 the `crop` keyword will result in an `Exception` being raised.
 
+=== About Layers
+
+Each layer consists of a single image or Displayable that is repeated on the
+x-axis to fill the target width for the ParallaxScroll.  Each layer is stacked
+on top of one another in the given order with each layer given it's own scroll
+speed to create the parallax effect.
+
+Layer displayables will only be repeated along the x-axis and will be positioned
+at the top of the ParallaxScroll bounding box.
+
 == Credits
 
 * link:https://edermunizz.itch.io/free-pixel-art-forest[Background layers] by https://edermunizz.itch.io/[Eder Muniz]
