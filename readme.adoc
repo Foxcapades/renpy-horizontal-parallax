@@ -6,6 +6,11 @@ layers with a parallax effect.
 
 image::docs/preview.gif[]
 
+[IMPORTANT]
+--
+ParallaxScroll is only compatible with Ren'Py 8.1.1+.
+--
+
 == Usage
 
 === Constructing a ParallaxScroll

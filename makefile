@@ -1,8 +1,8 @@
 VERSION := $(shell grep 'define config.version' game/options.rpy | sed 's/.\+"\(.\+\)"/\1/')
 FEATURE := $(shell grep 'define config.version' game/options.rpy | sed 's/.\+"\(.\+\)"/\1/;s/\([0-9]\+\.[0-9]\+\).\+/\1.0/')
 
-SLIM_ZIP_NAME := "releases/ps-slim-$(VERSION).zip"
-FULL_ZIP_NAME := "releases/ps-project-$(VERSION).zip"
+SLIM_ZIP_NAME := releases/ps-slim-$(VERSION).zip
+FULL_ZIP_NAME := releases/ps-project-$(VERSION).zip
 
 .PHONY: default
 default:
@@ -16,7 +16,12 @@ clean:
 
 
 .PHONY: release
-release: build-base-project-zip build-slim-zip
+release: pre-release build-base-project-zip build-slim-zip build-distributions
+
+
+.PHONY: pre-release
+pre-release: clean
+	@rm -rf releases
 
 
 .PHONY: build-base-project-zip
@@ -36,6 +41,14 @@ build-slim-zip: clean
 	@cp license parallax-scroll-license
 	@zip -r "$(SLIM_ZIP_NAME)" game/lib/fxcpds/parallax_scroll parallax-scroll-license
 	@rm parallax-scroll-license
+
+
+.PHONY: build-distributions
+build-distributions: clean
+	@mkdir -p releases
+	@renpy-8.1.1 /opt/renpy/8.1.1/launcher distribute . --package=pc --dest=releases
+	@renpy-8.1.1 /opt/renpy/8.1.1/launcher distribute . --package=mac --dest=releases
+	@renpy-8.1.1 /opt/renpy/8.1.1/launcher distribute . --package=linux --dest=releases
 
 
 .PHONY: docs
