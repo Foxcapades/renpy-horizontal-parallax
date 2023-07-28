@@ -108,3 +108,8 @@ paraphrase in a way that is not legally binding:
 
 For a better breakdown of what the license actually means see:
 https://choosealicense.com/licenses/mit/
+
+I do ask that you credit me in some way, but if you don't I'm not gonna call the
+open-source police on you.  If you do choose to credit me you can do so by
+providing a link to my link:https://github.com/Foxcapades[GitHub], my
+link:https://foxcapades.itch.io/[Itch.io], or just call me Foxcapades.
