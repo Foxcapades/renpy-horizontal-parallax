@@ -10,7 +10,7 @@ link:https://github.com/Foxcapades/renpy-parallax-displayable/blob/main/game/lib
 Source code and demonstration of a scrolling displayable built on multiple
 layers with a parallax effect.
 
-image::docs/preview.gif[]
+image::.assets/gh-preview.gif[]
 
 [IMPORTANT]
 --
