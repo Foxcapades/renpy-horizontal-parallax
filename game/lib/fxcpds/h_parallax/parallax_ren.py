@@ -1,5 +1,6 @@
 import renpy  # type: ignore
 from renpy import Transform  # type: ignore
+from renpy.store import config  # type: ignore
 
 """renpy
 init python:
@@ -13,7 +14,6 @@ class ParallaxScroll(Transform):
 
     def __init__(
         self,
-        dimensions: tuple[int, int],
         *layers: tuple[renpy.Displayable | str, float],
         **kwargs
     ) -> None:
@@ -23,10 +23,6 @@ class ParallaxScroll(Transform):
 
         Arguments
         ---------
-        dimensions : tuple[int, int]
-            A two-tuple containing the width and height of the displayable in
-            the format "(width, height)".
-
         *layers : tuple[Displayable, float]
             One or more two-tuples that each contain a displayable to render
             and a float which represents the scrolling speed of the layer.
@@ -63,36 +59,48 @@ class ParallaxScroll(Transform):
             Controls the delay between ParallaxScroll rerenders.
 
             Defaults to 0.01
+
+        height : int
+            Controls the height of the displayable.
+
+            Defaults to `config.screen_height`
+
+        width : int
+            Controls the width of the displayable.
+
+            Defaults to `config.screen_width`
         """
 
-        if (not isinstance(dimensions, tuple)) or len(dimensions) != 2:
-            raise Exception(
-                'argument "dimensions" must be a two-tuple containing a width '
-                'and a height in the form "(width, height)"'
-            )
+        width = kwargs['width'] if 'width' in kwargs else config.screen_width
+        height = kwargs['height'] if 'height' in kwargs else config.screen_height
 
-        if not (isinstance(dimensions[0], int) or isinstance(dimensions[0], float)):
-            raise Exception(
-                'argument "dimensions" value 1 was not an int or a float value.'
-            )
+        if not isinstance(width, int):
+            if isinstance(width, float):
+                width = int(width)
+            else:
+                raise Exception('argument "width" must be an int value')
 
-        if not (isinstance(dimensions[1], int) or isinstance(dimensions[1], float)):
-            raise Exception(
-                'argument "dimensions" value 2 was not an int or a float value.'
-            )
+        if not isinstance(height, int):
+            if isinstance(height, float):
+                height = int(height)
+            else:
+                raise Exception('argument "height" must be an int value')
 
         if 'crop' in kwargs:
             raise Exception('argument "crop" is not permitted.')
 
-        self.__child = _ParallaxScrollContainer(dimensions, *layers, **kwargs)
+        self.__child = _ParallaxScrollContainer((width, height), *layers, **kwargs)
 
         if 'direction' in kwargs:
             del kwargs['direction']
-
         if 'render_delay' in kwargs:
             del kwargs['render_delay']
+        if 'width' in kwargs:
+            del kwargs['width']
+        if 'height' in kwargs:
+            del kwargs['height']
 
-        super(ParallaxScroll, self).__init__(self.__child, **kwargs, crop=(0, 0, dimensions[0], dimensions[1]))
+        super(ParallaxScroll, self).__init__(self.__child, **kwargs, crop=(0, 0, width, height))
 
 
 class _ParallaxScrollContainer(renpy.Displayable):

@@ -19,14 +19,106 @@ ParallaxScroll is only compatible with Ren'Py 8.1.1+.
 
 == Usage
 
-=== Constructing a ParallaxScroll
+=== Via Statement Block
+
+[source, python]
+----
+h_parallax foo:
+    "images/backgrounds/scrolling_forest/10.png" 0.0    # Doesn't scroll
+    "images/backgrounds/scrolling_forest/09.png" 0.001
+    "images/backgrounds/scrolling_forest/08.png" 0.0025
+    "images/backgrounds/scrolling_forest/07.png" 0.005
+    "images/backgrounds/scrolling_forest/06.png" 0.0075
+    "images/backgrounds/scrolling_forest/05.png" 0.025
+    "images/backgrounds/scrolling_forest/04.png" 0.025
+    "images/backgrounds/scrolling_forest/03.png" 0.05
+    "images/backgrounds/scrolling_forest/02.png" 0.05
+    "images/backgrounds/scrolling_forest/01.png" 0.075
+    "images/backgrounds/scrolling_forest/00.png" 0.1    # Scrolls 10% of its width per second
+----
+
+
+The `h_parallax` statement declares a new parallax image with the given name
+("foo" in the above example) constructed of the frames and frame scroll speeds
+given in the following block.
+
+Each line in the block may be one of the following things:
+
+* An image name/path followed by a scroll speed value.
+* The `height` keyword followed by an int value declaring the ``h_parallax``'s
+display height.
+* The `width` keyword followed by an int value declaring the ``h_parallax``'s
+display width.
+* The `direction` keyword followed by either the string `'left'` or `'right'`.
+* The `render_delay` keyword followed by a float value declaring the delay
+between frames in the scrolling animation.
+
+The given layers are rendered in back to front order with the first declared
+layer being on the bottom and the last declared layer being on top.
+
+==== Optional Properties
+
+`height <int>`::
+A height value for the `h_parallax`.  Controls the display height that the
+parallax scroll will be cropped to.  This value should match the size of the
+images being used in the scroll.
++
+Defaults to `config.screen_height`.
++
+[source, python]
+----
+h_parallax bar:
+    height 600
+----
+
+`width <int>`::
+A width value for the `h_parallax`.  Controls the display width that the
+parallax scroll will be cropped to.  This value should match the size of the
+images being used in the scroll.
++
+Defaults to `config.screen_width`.
++
+[source, python]
+----
+h_parallax fizz:
+    width 800
+----
+
+`direction <"left"|"right">`::
+The scroll direction for the parallax scroll.  Must be one of the strings
+`"left"` or `"right"`.
++
+A value of `"left"` causes the parallax scroll to move from right to left.  A
+value of `"right"` causes the parallax scroll to move from left to right.
++
+Defaults to `"left"`.
++
+[source, python]
+----
+h_parallax buzz:
+    direction "left"
+----
+
+`render_delay <float>`::
+The delay between render frames for the scroll.  A smaller value means a
+smoother animation.
++
+Defaults to `0.01`
++
+[source, python]
+----
+h_parallax foo:
+    render_delay 0.01
+----
+
+
+=== Via Class Constructor
 
 [source, python]
 ----
 image foo = ParallaxScroll(
-    (1920, 1080),
     ("images/backgrounds/scrolling_forest/10.png", 0.0),    # Doesn't scroll
-    ("images/backgrounds/scrolling_forest/08.png", 0.001),
+    ("images/backgrounds/scrolling_forest/09.png", 0.001),
     ("images/backgrounds/scrolling_forest/08.png", 0.0025),
     ("images/backgrounds/scrolling_forest/07.png", 0.005),
     ("images/backgrounds/scrolling_forest/06.png", 0.0075),
@@ -35,7 +127,7 @@ image foo = ParallaxScroll(
     ("images/backgrounds/scrolling_forest/03.png", 0.05),
     ("images/backgrounds/scrolling_forest/02.png", 0.05),
     ("images/backgrounds/scrolling_forest/01.png", 0.075),
-    ("images/backgrounds/scrolling_forest/00.png", 0.1),    # Scrolls 10% of it's width per second
+    ("images/backgrounds/scrolling_forest/00.png", 0.1),    # Scrolls 10% of its width per second
 )
 ----
 
@@ -44,16 +136,10 @@ image foo = ParallaxScroll(
 
 [source, python]
 ----
-def __init__(self, dimensions, *layers, **kwargs)
+def __init__(self, *layers, **kwargs)
 ----
 
 ===== Positional Arguments
-
-`dimensions : tuple[int, int]`::
-+
-A two-tuple containing the width and height of the displayable in the format
-`(width, height)`.
-
 
 `*layers : tuple[renpy.Displayable | str, float]`::
 +
@@ -91,6 +177,19 @@ Defaults to `"left"`.
 Controls the delay between Displayable re-renders.
 +
 Defaults to `0.01`
+
+`height : int`::
++
+Controls the display height of the parallax.  The displayable will be cropped to
+this height.  This value should match the size of the source image.
++
+Defaults to `config.screen_height`
+
+`width : int`::
++
+Controls the display width of the parallax.  The displayable will be cropped to
+this width.  This value should match the size of the source image.
+
 
 
 === Advanced Usage
