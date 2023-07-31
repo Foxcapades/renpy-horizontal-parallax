@@ -2,7 +2,7 @@
 ##   Declaring a parallax scroll as a class constructor.
 ##
 
-# image foo = ParallaxScroll(
+# image foo = HParallax(
 #     ("images/backgrounds/scrolling_forest/10.png", 0.0),
 #     ("images/backgrounds/scrolling_forest/09.png", 0.001),
 #     ("images/backgrounds/scrolling_forest/08.png", 0.0025),

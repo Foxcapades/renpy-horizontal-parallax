@@ -1,11 +1,11 @@
-= Ren'Py ParallaxScroll
+= Ren'Py Horizontal Parallax
 :icons: font
 
-link:https://github.com/Foxcapades/renpy-parallax-displayable/releases/latest[Latest Release]
+link:https://github.com/Foxcapades/renpy-horizontal-parallax/releases/latest[Latest Release]
 |
 link:https://foxcapades.itch.io/parallax-scroll[Itch.io]
 |
-link:https://github.com/Foxcapades/renpy-parallax-displayable/blob/main/game/lib/fxcpds/parallax_scroll/parallax_ren.py[Source]
+link:https://github.com/Foxcapades/renpy-horizontal-parallax/blob/main/game/lib/fxcpds/h_parallax/parallax_ren.py[Source]
 
 Source code and demonstration of a scrolling displayable built on multiple
 layers with a parallax effect.
@@ -14,7 +14,7 @@ image::.assets/gh-preview.gif[]
 
 [IMPORTANT]
 --
-ParallaxScroll is only compatible with Ren'Py 8.1.1+.
+HParallax is only compatible with Ren'Py 8.1+.
 --
 
 == Usage
@@ -116,7 +116,7 @@ h_parallax foo:
 
 [source, python]
 ----
-image foo = ParallaxScroll(
+image foo = HParallax(
     ("images/backgrounds/scrolling_forest/10.png", 0.0),    # Doesn't scroll
     ("images/backgrounds/scrolling_forest/09.png", 0.001),
     ("images/backgrounds/scrolling_forest/08.png", 0.0025),
@@ -162,7 +162,7 @@ furthest from the player while the last given layer will be the closest.
 
 `direction : "left"|"right"`::
 +
-Controls the direction the ParallaxScroll layers will scroll.
+Controls the direction the HParallax layers will scroll.
 +
 A value of "left" means the layers will scroll from right to left, where a value
 of "right" means the layers will scroll from left to right.
@@ -194,15 +194,15 @@ this width.  This value should match the size of the source image.
 
 === Advanced Usage
 
-The `ParallaxScroll` class extends Ren'Py's `Transform` type, meaning any
+The `HParallax` class extends Ren'Py's `Transform` type, meaning any
 normal transform keyword argument is permitted and will be applied to the
-`ParallaxScroll`.
+`HParallax`.
 
 For example, the colors of the parallax may be inverted by doing the following:
 
 [source, python]
 ----
-ParallaxScroll(
+HParallax(
   ... # dimensions
   ... # layers
   matrixcolor=InvertMatrix(1.0)

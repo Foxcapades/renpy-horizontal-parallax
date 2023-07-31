@@ -3,7 +3,7 @@ python early:
     def _exec_h_parallax_cds(values):
         name, layers, opts = values
 
-        renpy.image(name, ParallaxScroll(*layers, **opts))
+        renpy.image(name, HParallax(*layers, **opts))
 
     def _parse_h_parallax_cds(lexer, **opts):
         name = lexer.name()

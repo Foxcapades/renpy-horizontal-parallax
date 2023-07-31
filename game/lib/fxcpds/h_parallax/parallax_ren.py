@@ -7,7 +7,7 @@ init python:
 """
 
 
-class ParallaxScroll(Transform):
+class HParallax(Transform):
     """
     Scrolling Image with a configurable parallax effect.
     """
@@ -18,7 +18,7 @@ class ParallaxScroll(Transform):
         **kwargs
     ) -> None:
         """
-        Initializes the new ParallaxScroll instance with the given arguments.
+        Initializes the new HParallax instance with the given arguments.
 
 
         Arguments
@@ -44,7 +44,7 @@ class ParallaxScroll(Transform):
         Keyword Arguments
         -----------------
         direction : "left" | "right"
-            Controls the direction the ParallaxScroll layers will scroll.
+            Controls the direction the HParallax layers will scroll.
 
             A value of "left" means the layers will scroll from right to left,
             where a value of "right" means the layers will scroll from left to
@@ -56,7 +56,7 @@ class ParallaxScroll(Transform):
             Defaults to "left".
 
         render_delay : float
-            Controls the delay between ParallaxScroll rerenders.
+            Controls the delay between HParallax rerenders.
 
             Defaults to 0.01
 
@@ -89,7 +89,7 @@ class ParallaxScroll(Transform):
         if 'crop' in kwargs:
             raise Exception('argument "crop" is not permitted.')
 
-        self.__child = _ParallaxScrollContainer((width, height), *layers, **kwargs)
+        self.__child = _HParallaxContainer((width, height), *layers, **kwargs)
 
         if 'direction' in kwargs:
             del kwargs['direction']
@@ -100,10 +100,10 @@ class ParallaxScroll(Transform):
         if 'height' in kwargs:
             del kwargs['height']
 
-        super(ParallaxScroll, self).__init__(self.__child, **kwargs, crop=(0, 0, width, height))
+        super(HParallax, self).__init__(self.__child, **kwargs, crop=(0, 0, width, height))
 
 
-class _ParallaxScrollContainer(renpy.Displayable):
+class _HParallaxContainer(renpy.Displayable):
     """
     Creator Defined Displayable representing a layered scrolling image with
     a configurable parallax effect.
@@ -119,7 +119,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
     _height : int
         Displayable render height.
 
-    _layers : list[_ParallaxScrollLayer]
+    _layers : list[_HParallaxLayer]
         A list of the layers that this displayable is composed of.
     """
 
@@ -130,7 +130,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
         **kwargs
     ) -> None:
         """
-        Initializes the new _ParallaxScrollContainer instance with the given
+        Initializes the new _HParallaxContainer instance with the given
         arguments.
 
         Arguments
@@ -160,7 +160,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
         Keyword Arguments
         -----------------
         direction : "left" | "right"
-            Controls the direction the ParallaxScroll layers will scroll.
+            Controls the direction the HParallax layers will scroll.
 
             A value of "left" means the layers will scroll from right to left,
             where a value of "right" means the layers will scroll from left to
@@ -172,11 +172,11 @@ class _ParallaxScrollContainer(renpy.Displayable):
             Defaults to "left".
 
         render_delay : float
-            Controls the delay between ParallaxScroll rerenders.
+            Controls the delay between HParallax rerenders.
 
             Defaults to 0.01
         """
-        super(_ParallaxScrollContainer, self).__init__(**kwargs)
+        super(_HParallaxContainer, self).__init__(**kwargs)
 
         self._validate_layers(layers)
 
@@ -186,7 +186,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
         self._width, self._height = dimensions
 
         self._layers = [
-            _ParallaxScrollLayer(layer[0], layer[1], self._width, left)
+            _HParallaxLayer(layer[0], layer[1], self._width, left)
             for layer in layers
         ]
 
@@ -276,7 +276,7 @@ class _ParallaxScrollContainer(renpy.Displayable):
             return 0.01
 
 
-class _ParallaxScrollLayer:
+class _HParallaxLayer:
     """
     Represents a single layer that is part of a scrolling image with a parallax
     effect.
@@ -499,7 +499,7 @@ class _ParallaxScrollLayer:
         self._height: int = size[1]
 
         if self._width == 0 or self._height == 0:
-            raise Exception("displayable for _ParallaxScrollLayer has a width and/or height of 0")
+            raise Exception("displayable for _HParallaxLayer has a width and/or height of 0")
 
     @staticmethod
     def _clamp(percent: float) -> float:
