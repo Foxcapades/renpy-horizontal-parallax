@@ -39,7 +39,7 @@ build-slim-zip: clean
 	@mkdir -p .build
 	@rm -f "$(SLIM_ZIP_NAME)"
 	@cp license parallax-scroll-license
-	@zip -r "$(SLIM_ZIP_NAME)" game/lib/fxcpds/parallax_scroll parallax-scroll-license
+	@zip -r "$(SLIM_ZIP_NAME)" game/lib/fxcpds/h_parallax parallax-scroll-license
 	@rm parallax-scroll-license
 
 
