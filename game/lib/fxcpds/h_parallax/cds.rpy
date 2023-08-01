@@ -11,6 +11,11 @@ python early:
         if name is None:
             lexer.error("h_parallax name is required")
 
+        next_name = lexer.name()
+        while next_name is not None:
+            name += " " + next_name
+            next_name = lexer.name()
+
         lexer.expect_block(f'h_parallax {name}')
 
         sub_l  = lexer.subblock_lexer()

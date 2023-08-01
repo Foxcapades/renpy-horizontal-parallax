@@ -107,7 +107,7 @@ Defaults to `0.01`
 +
 [source, python]
 ----
-h_parallax foo:
+h_parallax foo bar:
     render_delay 0.01
 ----
 
